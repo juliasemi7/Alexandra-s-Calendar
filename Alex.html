@@ -27,15 +27,14 @@
             --pkg-3-bg: #e0e7ff; --pkg-3-text: #4338ca; /* Mar-Apr */
             --pkg-4-bg: #fef9c3; --pkg-4-text: #a16207; /* Apr-May */
             --pkg-5-bg: #f3e8ff; --pkg-5-text: #7e22ce; /* May-Jun */
-            --pkg-sep-bg: #fef3c7; --pkg-sep-text: #b45309; /* Sep-Oct */
+            --pkg-sep-bg: #fef3c7; --pkg-sep-text: #b45309; /* September package warm amber */
+            --pkg-oct-bg: #ffe4e6; --pkg-oct-text: #be123c; /* October package soft rose */
         }
-
         body {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             color: #1e293b;
             min-height: 100vh;
         }
-
         /* Package classes */
         .pkg-1 { background-color: var(--pkg-1-bg); color: var(--pkg-1-text); font-weight: 700; }
         .pkg-2 { background-color: var(--pkg-2-bg); color: var(--pkg-2-text); font-weight: 700; }
@@ -43,24 +42,21 @@
         .pkg-4 { background-color: var(--pkg-4-bg); color: var(--pkg-4-text); font-weight: 700; }
         .pkg-5 { background-color: var(--pkg-5-bg); color: var(--pkg-5-text); font-weight: 700; }
         .pkg-september { background-color: var(--pkg-sep-bg); color: var(--pkg-sep-text); font-weight: 700; }
-
+        .pkg-october { background-color: var(--pkg-oct-bg); color: var(--pkg-oct-text); font-weight: 700; }
         .weekend {
             background-color: #fef2f2;
             color: #ef4444;
         }
-
         .other-month {
             color: #cbd5e1;
             font-weight: 400;
         }
-
         /* Alex's lesson indicator (Tuesday & Friday) */
         .alex-lesson {
             box-shadow: inset 0 0 0 2px #2563eb;
             font-weight: 800 !important;
             position: relative;
         }
-
         .alex-lesson::after {
             content: '';
             position: absolute;
@@ -74,7 +70,6 @@
     </style>
 </head>
 <body class="p-4 sm:p-8 font-sans antialiased">
-
     <div class="max-w-7xl mx-auto">
         <header class="mb-8 text-center flex flex-col items-center justify-center gap-3">
             <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600 text-white font-extrabold rounded-full text-sm shadow-md shadow-blue-500/20 tracking-wider">
@@ -82,174 +77,136 @@
             </div>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Alex's Calendar</h1>
         </header>
-
         <main>
             <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </main>
+        
+        <!-- Legend -->
+        <div class="mt-10 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-wrap items-center justify-center gap-6">
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <span class="w-4 h-4 rounded bg-[#fef2f2] border border-red-200"></span> Выходные
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <span class="w-4 h-4 rounded" style="background-color: var(--pkg-sep-bg);"></span> Пакет (Сентябрь)
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <span class="w-4 h-4 rounded" style="background-color: var(--pkg-oct-bg);"></span> Пакет (Октябрь)
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <span class="w-4 h-4 rounded bg-white" style="box-shadow: inset 0 0 0 2px #2563eb;"></span> День занятия (Вт, Пт)
+            </div>
+        </div>
 
         <footer class="mt-12 text-center text-xs font-medium text-slate-400">
             © 2026 Alex's Calendar
         </footer>
     </div>
-
     <script>
         const year = 2026;
         const months = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
         const weekDays = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 
-        // Package 1: Jan 13 -> Feb 9 (20 workdays)
-        const pkg1 = [
-            "2026-01-13","2026-01-14","2026-01-15","2026-01-16",
-            "2026-01-19","2026-01-20","2026-01-21","2026-01-22","2026-01-23",
-            "2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30",
-            "2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06",
-            "2026-02-09"
-        ];
+        function generateWorkingDays(startDateStr, count = 20) {
+            let dates = [];
+            let curr = new Date(startDateStr);
+            while (dates.length < count) {
+                let dayOfWeek = curr.getDay();
+                if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                    let y = curr.getFullYear();
+                    let m = String(curr.getMonth() + 1).padStart(2, '0');
+                    let d = String(curr.getDate()).padStart(2, '0');
+                    dates.push(`${y}-${m}-${d}`);
+                }
+                curr.setDate(curr.getDate() + 1);
+            }
+            return dates;
+        }
 
-        // Package 2: Feb 10 -> Mar 9 (20 workdays)
-        const pkg2 = [
-            "2026-02-10","2026-02-11","2026-02-12","2026-02-13",
-            "2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20",
-            "2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27",
-            "2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06",
-            "2026-03-09"
-        ];
+        const pkg1 = generateWorkingDays("2026-02-02", 20);
+        const pkg2 = generateWorkingDays("2026-03-02", 20);
+        const pkg3 = generateWorkingDays("2026-04-01", 20);
+        const pkg4 = generateWorkingDays("2026-05-04", 20);
+        const pkg5 = generateWorkingDays("2026-06-01", 20);
+        const septemberPackage = generateWorkingDays("2026-09-04", 20);
+        const octoberPackage = generateWorkingDays("2026-10-01", 20);
 
-        // Package 3: Mar 10 -> Apr 6 (20 workdays)
-        const pkg3 = [
-            "2026-03-10","2026-03-11","2026-03-12","2026-03-13",
-            "2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20",
-            "2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27",
-            "2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03",
-            "2026-04-06"
-        ];
-
-        // Package 4: Apr 7 -> May 5 (20 workdays)
-        const pkg4 = [
-            "2026-04-07","2026-04-08","2026-04-09","2026-04-10",
-            "2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17",
-            "2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24",
-            "2026-04-27","2026-04-28","2026-04-29","2026-04-30",
-            "2026-05-04","2026-05-05"
-        ];
-
-        // Package 5: May 8 -> Jun 4 (20 workdays)
-        const pkg5 = [
-            "2026-05-08",
-            "2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15",
-            "2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22",
-            "2026-05-25","2026-05-26","2026-05-27","2026-05-28","2026-05-29",
-            "2026-06-01","2026-06-02","2026-06-03","2026-06-04"
-        ];
-
-        // September package (20 workdays: Sep 4 -> Oct 1)
-        const pkgSeptember = [
-            "2026-09-04",
-            "2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11",
-            "2026-09-14","2026-09-15","2026-09-16","2026-09-17","2026-09-18",
-            "2026-09-21","2026-09-22","2026-09-23","2026-09-24","2026-09-25",
-            "2026-09-28","2026-09-29","2026-09-30","2026-10-01"
-        ];
-
-        // Helper date utility functions
         function getDaysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
         function getStartOffset(y, m) { const d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; }
         function formatDate(y, m, d) { return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
 
-        function getPackageClass(dateStr) {
-            if (pkg1.includes(dateStr)) return "pkg-1";
-            if (pkg2.includes(dateStr)) return "pkg-2";
-            if (pkg3.includes(dateStr)) return "pkg-3";
-            if (pkg4.includes(dateStr)) return "pkg-4";
-            if (pkg5.includes(dateStr)) return "pkg-5";
-            if (pkgSeptember.includes(dateStr)) return "pkg-september";
-            return null;
-        }
-
-        function isAlexLesson(dateStr, dateObj) {
-            const dayOfWeek = dateObj.getDay(); // 2 = Tue, 5 = Fri
-            if (dayOfWeek !== 2 && dayOfWeek !== 5) return false;
-            
-            // Check if date belongs to any defined package
-            return getPackageClass(dateStr) !== null;
-        }
-
-        function getCellClasses(dateStr, y, m, d) {
-            const dateObj = new Date(y, m, d);
-            const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6);
-            let classes = [];
-
-            const pkgClass = getPackageClass(dateStr);
-            if (pkgClass) classes.push(pkgClass);
-            else if (isWeekend) classes.push("weekend");
-
-            if (isAlexLesson(dateStr, dateObj)) {
-                classes.push("alex-lesson");
-            }
-
-            return classes.join(" ");
-        }
-
         function renderCalendar() {
-            const container = document.getElementById("calendarGrid");
-            container.innerHTML = "";
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
 
             for (let m = 0; m < 12; m++) {
-                const daysInMonth = getDaysInMonth(year, m);
-                const startOffset = getStartOffset(year, m);
-                const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+                const daysCount = getDaysInMonth(year, m);
+                const startDay = getStartOffset(year, m);
+                const totalCells = Math.ceil((startDay + daysCount) / 7) * 7;
 
-                let cardHtml = `
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden flex flex-col">
-                    <div class="bg-slate-100 text-slate-800 text-center py-2.5 px-4 font-bold text-base tracking-wide flex items-center justify-between border-b border-slate-200/60">
-                        <span>${months[m]}</span>
-                        <span class="text-xs text-slate-400 font-normal">2026</span>
-                    </div>
-                    <div class="p-3 flex-1 flex flex-col justify-center">
-                        <table class="w-full border-separate border-spacing-1 text-center">
-                            <thead>
-                                <tr>`;
-                
-                for (let w of weekDays) {
-                    const isW = (w === "Сб" || w === "Вс");
-                    cardHtml += `<th class="py-1 text-[11px] font-bold ${isW ? 'text-red-500' : 'text-slate-400'} uppercase">${w}</th>`;
+                let monthHtml = `
+                    <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                        <div class="bg-slate-50/80 border-b border-slate-100 py-3 text-center font-extrabold text-slate-800 text-sm uppercase tracking-wider">
+                            ${months[m]} ${year}
+                        </div>
+                        <div class="p-4 flex-1">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr>
+                `;
+
+                for (let dName of weekDays) {
+                    monthHtml += `<th class="py-1.5 text-[11px] font-bold text-slate-400 text-center">${dName}</th>`;
                 }
-                
-                cardHtml += `</tr>
-                            </thead>
-                            <tbody>`;
+                monthHtml += `</tr></thead><tbody>`;
 
-                let day = 1;
+                let currentDay = 1;
                 for (let i = 0; i < totalCells; i++) {
-                    if (i % 7 === 0) cardHtml += "<tr>";
+                    if (i % 7 === 0) monthHtml += `<tr>`;
 
-                    if (i >= startOffset && day <= daysInMonth) {
-                        const dateStr = formatDate(year, m, day);
-                        const cls = getCellClasses(dateStr, year, m, day);
-                        cardHtml += `<td class="h-8 w-8 text-xs rounded-lg font-semibold transition-transform duration-150 align-middle ${cls}">${day}</td>`;
-                        day++;
-                    } else {
-                        const prevMonth = m === 0 ? 11 : m - 1;
-                        const prevYear = m === 0 ? year - 1 : year;
-                        const prevMonthDays = getDaysInMonth(prevYear, prevMonth);
-                        let prevDay = prevMonthDays - (startOffset - i - 1);
-                        if (prevDay <= 0) {
-                            const prevPrevMonth = prevMonth === 0 ? 11 : prevMonth - 1;
-                            const prevPrevYear = prevMonth === 0 ? year - 1 : year;
-                            prevDay = getDaysInMonth(prevPrevYear, prevPrevMonth) + prevDay;
+                    if (i >= startDay && currentDay <= daysCount) {
+                        const dateStr = formatDate(year, m, currentDay);
+                        const dateObj = new Date(year, m, currentDay);
+                        const dayOfWeek = dateObj.getDay(); // 0: Sun, 5: Fri, 2: Tue, 6: Sat
+                        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+                        let classNames = "w-8 h-8 mx-auto my-0.5 rounded-xl flex items-center justify-center text-xs transition-all";
+
+                        let pkgClass = "";
+                        if (pkg1.includes(dateStr)) pkgClass = "pkg-1";
+                        else if (pkg2.includes(dateStr)) pkgClass = "pkg-2";
+                        else if (pkg3.includes(dateStr)) pkgClass = "pkg-3";
+                        else if (pkg4.includes(dateStr)) pkgClass = "pkg-4";
+                        else if (pkg5.includes(dateStr)) pkgClass = "pkg-5";
+                        else if (septemberPackage.includes(dateStr)) pkgClass = "pkg-september";
+                        else if (octoberPackage.includes(dateStr)) pkgClass = "pkg-october";
+
+                        const isLesson = (pkgClass !== "") && (dayOfWeek === 2 || dayOfWeek === 5);
+
+                        if (isLesson) {
+                            classNames += ` alex-lesson ${pkgClass}`;
+                        } else if (pkgClass) {
+                            classNames += ` ${pkgClass}`;
+                        } else if (isWeekend) {
+                            classNames += ` weekend`;
+                        } else {
+                            classNames += ` text-slate-600 hover:bg-slate-100 font-medium`;
                         }
-                        cardHtml += `<td class="h-8 w-8 text-xs rounded-lg other-month align-middle">${prevDay}</td>`;
+
+                        monthHtml += `<td><div class="${classNames}">${currentDay}</div></td>`;
+                        currentDay++;
+                    } else {
+                        monthHtml += `<td><div class="w-8 h-8 mx-auto my-0.5 rounded-xl flex items-center justify-center text-xs other-month">-</div></td>`;
                     }
 
-                    if (i % 7 === 6) cardHtml += "</tr>";
+                    if (i % 7 === 6) monthHtml += `</tr>`;
                 }
 
-                cardHtml += `</tbody></table></div></div>`;
-                container.innerHTML += cardHtml;
+                monthHtml += `</tbody></table></div></div>`;
+                grid.innerHTML += monthHtml;
             }
         }
 
-        window.onload = renderCalendar;
+        renderCalendar();
     </script>
 </body>
 </html>
