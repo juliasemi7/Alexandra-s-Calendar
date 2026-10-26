@@ -12,30 +12,27 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
         :root {
-            /* Distinct soft colors for each package */
-            --pkg-1-bg: #dcfce7; --pkg-1-text: #15803d; /* Jan-Feb */
-            --pkg-2-bg: #ffedd5; --pkg-2-text: #c2410c; /* Feb-Mar */
-            --pkg-3-bg: #e0e7ff; --pkg-3-text: #4338ca; /* Mar-Apr */
-            --pkg-4-bg: #fef9c3; --pkg-4-text: #a16207; /* Apr-May */
-            --pkg-5-bg: #f3e8ff; --pkg-5-text: #7e22ce; /* May-Jun */
-            --pkg-sep-bg: #fef3c7; --pkg-sep-text: #b45309; /* September package warm amber */
-            --pkg-oct-bg: #ffe4e6; --pkg-oct-text: #be123c; /* October package soft rose */
+            --pkg-1-bg: #dcfce7; --pkg-1-text: #15803d;
+            --pkg-2-bg: #ffedd5; --pkg-2-text: #c2410c;
+            --pkg-3-bg: #e0e7ff; --pkg-3-text: #4338ca;
+            --pkg-4-bg: #fef9c3; --pkg-4-text: #a16207;
+            --pkg-5-bg: #f3e8ff; --pkg-5-text: #7e22ce;
+            --pkg-sep-bg: #fef3c7; --pkg-sep-text: #b45309;
+            --pkg-oct-bg: #ffe4e6; --pkg-oct-text: #be123c;
+            --pkg-nov-bg: #e2e8f0; --pkg-nov-text: #334155;
         }
         body {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             color: #1e293b;
             min-height: 100vh;
         }
-        /* Package classes */
         .pkg-1 { background-color: var(--pkg-1-bg); color: var(--pkg-1-text); font-weight: 700; }
         .pkg-2 { background-color: var(--pkg-2-bg); color: var(--pkg-2-text); font-weight: 700; }
         .pkg-3 { background-color: var(--pkg-3-bg); color: var(--pkg-3-text); font-weight: 700; }
@@ -43,15 +40,9 @@
         .pkg-5 { background-color: var(--pkg-5-bg); color: var(--pkg-5-text); font-weight: 700; }
         .pkg-september { background-color: var(--pkg-sep-bg); color: var(--pkg-sep-text); font-weight: 700; }
         .pkg-october { background-color: var(--pkg-oct-bg); color: var(--pkg-oct-text); font-weight: 700; }
-        .weekend {
-            background-color: #fef2f2;
-            color: #ef4444;
-        }
-        .other-month {
-            color: #cbd5e1;
-            font-weight: 400;
-        }
-        /* Alex's lesson indicator (Tuesday & Friday) */
+        .pkg-november { background-color: var(--pkg-nov-bg); color: var(--pkg-nov-text); font-weight: 700; }
+        .weekend { background-color: #fef2f2; color: #ef4444; }
+        .other-month { color: #cbd5e1; font-weight: 400; }
         .alex-lesson {
             box-shadow: inset 0 0 0 2px #2563eb;
             font-weight: 800 !important;
@@ -81,7 +72,6 @@
             <div id="calendarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </main>
         
-        <!-- Legend -->
         <div class="mt-10 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm flex flex-wrap items-center justify-center gap-6">
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
                 <span class="w-4 h-4 rounded bg-[#fef2f2] border border-red-200"></span> Выходные
@@ -91,6 +81,9 @@
             </div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
                 <span class="w-4 h-4 rounded" style="background-color: var(--pkg-oct-bg);"></span> Пакет (Октябрь)
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <span class="w-4 h-4 rounded" style="background-color: var(--pkg-nov-bg);"></span> Пакет (Ноябрь)
             </div>
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-700">
                 <span class="w-4 h-4 rounded bg-white" style="box-shadow: inset 0 0 0 2px #2563eb;"></span> День занятия (Вт, Пт)
@@ -129,6 +122,7 @@
         const pkg5 = generateWorkingDays("2026-06-01", 20);
         const septemberPackage = generateWorkingDays("2026-09-04", 20);
         const octoberPackage = generateWorkingDays("2026-10-01", 20);
+        const novemberPackage = generateWorkingDays("2026-11-06", 20);
 
         function getDaysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
         function getStartOffset(y, m) { const d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; }
@@ -166,7 +160,7 @@
                     if (i >= startDay && currentDay <= daysCount) {
                         const dateStr = formatDate(year, m, currentDay);
                         const dateObj = new Date(year, m, currentDay);
-                        const dayOfWeek = dateObj.getDay(); // 0: Sun, 5: Fri, 2: Tue, 6: Sat
+                        const dayOfWeek = dateObj.getDay();
                         const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
                         let classNames = "w-8 h-8 mx-auto my-0.5 rounded-xl flex items-center justify-center text-xs transition-all";
@@ -179,6 +173,7 @@
                         else if (pkg5.includes(dateStr)) pkgClass = "pkg-5";
                         else if (septemberPackage.includes(dateStr)) pkgClass = "pkg-september";
                         else if (octoberPackage.includes(dateStr)) pkgClass = "pkg-october";
+                        else if (novemberPackage.includes(dateStr)) pkgClass = "pkg-november";
 
                         const isLesson = (pkgClass !== "") && (dayOfWeek === 2 || dayOfWeek === 5);
 
